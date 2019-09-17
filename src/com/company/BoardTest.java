@@ -8,12 +8,16 @@ class BoardTest {
 
     @Test
     void spawnPlayer() {
-        Board board = new Board(5, 5);
-        board.showBoard();
-        board.movePlayers();;
-        board.showBoard();
-        board.movePlayers();;
-        board.showBoard();
+        Board board = new Board(100, 100);
+
+        for (int i = 0; i < 10000; i++){
+            board.nextRound();
+        }
+
+
+
+
+
         /*Player[][] players = board.getPlayers();
         assertEquals(true, players[1][0].isAlive());
         assertEquals(false, players[0][0].isAlive());*/

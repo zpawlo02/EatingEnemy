@@ -7,26 +7,27 @@ public class Board {
 
     private int width;
     private int heigth;
-    private static int numberOfRound;
+    private static int numberOfRounds = 0;
     private static int numberOfPlayersCreated = 1;
     private int playersAlive = 1;
     private Player[][] players;
 
     public Board(int width, int heigth){
-        this.width = width;
-        this.heigth = heigth;
+        this.width = heigth;
+        this.heigth = width;
         this.players = new Player[width][heigth];
         this.players[0][0] = new Player(2, numberOfPlayersCreated,true);
     }
 
     public void spawnPlayer(){
         int whichWay = new Random().nextInt(4) + 1;
-        int playerX = new Random().nextInt(width+1);
-        int playerY = new Random().nextInt(heigth+1);
+        int playerX = new Random().nextInt(heigth);
+        int playerY = new Random().nextInt(width);
 
-        while (players[playerX][playerY].isAlive()){
-            playerX = new Random().nextInt(width+1);
-            playerY = new Random().nextInt(heigth+1);
+
+        while (players[playerX][playerY] != null ){
+            playerX = new Random().nextInt(heigth);
+            playerY = new Random().nextInt(width);
         }
 
 
@@ -36,20 +37,34 @@ public class Board {
     }
 
     public void nextRound(){
-        if (numberOfRound % 3 == 0){
+        numberOfRounds++;
+        if (numberOfRounds % 3 == 0 && playersAlive < width*heigth){
+
             spawnPlayer();
         }
+        System.out.println("Round: " + numberOfRounds);
+
+        System.out.println(" ");
+        System.out.println("-");
+
+        System.out.println("Alive: " + playersAlive);
+
+        System.out.println("-");
+
+      //  showBoard();
 
         movePlayers();
 
-        showBoard();
+        /*if(endOfGame() == true){
+
+        }*/
 
     }
 
     public void movePlayers(){
         ArrayList<Integer> movedPlayers = new ArrayList<Integer>();
-        for (int i = 0; i < width; i++){
-            for (int j = 0; j < heigth; j++){
+        for (int j = 0; j < width; j++){
+            for (int i = 0; i < heigth; i++){
                 if(players[i][j] != null && players[i][j].isAlive()){
                     boolean canMove = true;
                     for(int k = 0; k < movedPlayers.size(); k++){
@@ -71,16 +86,18 @@ public class Board {
         //RANDOM WAY OF MOVING
         int random = new Random().nextInt(4) + 1;
         //GOING UP
+
         if (players[x][y].getWhichWay() == 1) {
 
-            if (y < heigth && y > 0) {
+            if (x < heigth && x > 0) {
+
 
                 //ZROB RUCH GRACZEM JESLI NIKT TAM NIE STOI
                 //JESLI STOI TO GO ZABIJA I WCHODZI NA JEGO MIEJSCE
-                if (players[x][y - 1] != null && (players[x][y - 1].isAlive() && players[x][y - 1].getWhichWay() != 3)) {
+                if (players[x - 1][y] != null && (players[x - 1][y].isAlive() && players[x - 1][y].getWhichWay() != 3)) {
 
                     //EATING OPONENT AND CHANGING POSITION
-                    players[x][y - 1] = players[x][y];
+                    players[x - 1][y] = players[x][y];
 
                     //LESS ALIVE
                     playersAlive--;
@@ -88,53 +105,28 @@ public class Board {
                     //CLEAR LAST POSITION
                     players[x][y] = new Player();
 
-                } else if (players[x][y - 1] == null || !players[x][y - 1].isAlive()) {
+                } else if (players[x - 1][y] == null || !players[x - 1][y].isAlive()) {
 
                     //CHANGE POSITION
-                    players[x][y - 1] = players[x][y];
+                    players[x - 1][y] = players[x][y];
 
                     //CLEAR LAST POSITION
                     players[x][y] = new Player();
 
-                } else if (players[x][y - 1].isAlive() && players[x][y - 1].getWhichWay() == 3) {
-                    // NOTHING HAPPENS
+                } else if (players[x - 1][y].isAlive() && players[x - 1][y].getWhichWay() == 3) {
+
                 }
 
-                //CHANGING WAY OF MOVING
-                players[x][y - 1].setWhichWay(random);
+                players[x - 1][y].setWhichWay(random);
 
+            } else {
+                players[x][y].setWhichWay(random);
             }
         } //GOING RIGHT
         else if(players[x][y].getWhichWay() == 2){
-            if(x < width - 1 && x >= 0) {
+            if(y < width - 1 && y >= 0) {
 
-                if (players[x + 1][y] != null && (players[x + 1][y].isAlive() && players[x + 1][y].getWhichWay() != 4)) {
-
-                    players[x + 1][y] = players[x][y];
-
-                    playersAlive--;
-
-                    players[x][y] = new Player();
-
-                } else if (players[x + 1][y] == null || !players[x + 1][y].isAlive()) {
-
-                    players[x + 1][y] = players[x][y];
-
-                    players[x][y] = new Player();
-
-                } else if (players[x + 1][y].isAlive() && players[x + 1][y].getWhichWay() == 4) {
-
-                }
-
-                //CHANGING WAY OF MOVING
-
-                players[x + 1][y].setWhichWay(random);
-            }
-        }//GOING DOWN
-        else if(players[x][y].getWhichWay() == 3) {
-            if (y < width - 1 && y >= 0) {
-
-                if (players[x][y + 1] != null && (players[x][y + 1].isAlive() && players[x][y + 1].getWhichWay() != 1)) {
+                if (players[x][y + 1] != null && (players[x][y + 1].isAlive() && players[x][y + 1].getWhichWay() != 4)) {
 
                     players[x][y + 1] = players[x][y];
 
@@ -148,39 +140,70 @@ public class Board {
 
                     players[x][y] = new Player();
 
-                } else if (players[x][y + 1].isAlive() && players[x][y + 1].getWhichWay() == 1) {
+                } else if (players[x][y + 1].isAlive() && players[x][y + 1].getWhichWay() == 4) {
 
                 }
 
-                //CHANGING WAY OF MOVING
                 players[x][y + 1].setWhichWay(random);
 
+            } else {
+                players[x][y].setWhichWay(random);
             }
-        }//GOING LEFT
-        else if(players[x][y].getWhichWay() == 4) {
-            if (x < width && x > 0) {
+        }//GOING DOWN
+        else if(players[x][y].getWhichWay() == 3) {
+            if (x < width - 1 && x >= 0) {
 
-                if (players[x - 1][y] != null && (players[x - 1][y].isAlive() && players[x - 1][y].getWhichWay() != 2)) {
+                if (players[x + 1][y] != null && (players[x + 1][y].isAlive() && players[x + 1][y].getWhichWay() != 1)) {
 
-                    players[x - 1][y] = players[x][y];
+                    players[x + 1][y] = players[x][y];
 
                     playersAlive--;
 
                     players[x][y] = new Player();
 
-                } else if (players[x - 1][y] == null || !players[x - 1][y].isAlive()) {
+                } else if (players[x + 1][y] == null || !players[x + 1][y].isAlive()) {
 
-                    players[x - 1][y] = players[x][y];
+                    players[x + 1][y] = players[x][y];
 
                     players[x][y] = new Player();
 
-                } else if (players[x - 1][y].isAlive() && players[x - 1][y].getWhichWay() == 2) {
+                } else if (players[x + 1][y].isAlive() && players[x + 1][y].getWhichWay() == 1) {
 
                 }
 
-                //CHANGING WAY OF MOVING
-                players[x - 1][y].setWhichWay(random);
+                players[x + 1][y].setWhichWay(random);
 
+
+            } else {
+                players[x][y].setWhichWay(random);
+            }
+
+        }//GOING LEFT
+        else if(players[x][y].getWhichWay() == 4) {
+            if (y < width && y > 0) {
+
+                if (players[x][y - 1] != null && (players[x][y - 1].isAlive() && players[x][y - 1].getWhichWay() != 2)) {
+
+                    players[x][y - 1] = players[x][y];
+
+                    playersAlive--;
+
+                    players[x][y] = new Player();
+
+                } else if (players[x][y - 1] == null || !players[x][y - 1].isAlive()) {
+
+                    players[x][y - 1] = players[x][y];
+
+                    players[x][y] = new Player();
+
+                } else if (players[x][y - 1].isAlive() && players[x][y - 1].getWhichWay() == 2) {
+
+                }
+
+                    players[x][y - 1].setWhichWay(random);
+
+            }else {
+                players[x][y].setWhichWay(random);
             }
         }
 
@@ -241,5 +264,22 @@ public class Board {
         }
 
         System.out.println(boardS);
+    }
+
+    public boolean endOfGame(){
+        if(playersAlive == 1 && numberOfRounds > 3){
+            int idOfWinner = 0;
+            for (int j = 0; j < width; j++){
+                for(int i = 0; i < heigth; i++){
+                    if (players[i][j].isAlive()){
+                        idOfWinner = players[i][j].getIdOfPlayer();
+                    }
+                }
+            }
+            System.out.println("Wins player number: " + idOfWinner);
+            return true;
+        }else {
+            return false;
+        }
     }
 }
