@@ -8,7 +8,7 @@ class BoardTest {
 
     @Test
     void spawnPlayer() {
-        Board board = new Board(100, 100);
+        Board board = new Board(4, 5);
 
         for (int i = 0; i < 10000; i++){
             board.nextRound();

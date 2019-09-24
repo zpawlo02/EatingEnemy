@@ -13,9 +13,9 @@ public class Board {
     private Player[][] players;
 
     public Board(int width, int heigth){
-        this.width = heigth;
-        this.heigth = width;
-        this.players = new Player[width][heigth];
+        this.width = width;
+        this.heigth = heigth;
+        this.players = new Player[heigth][width];
         this.players[0][0] = new Player(2, numberOfPlayersCreated,true);
     }
 
@@ -51,7 +51,7 @@ public class Board {
 
         System.out.println("-");
 
-      //  showBoard();
+        showBoard();
 
         movePlayers();
 
@@ -63,8 +63,8 @@ public class Board {
 
     public void movePlayers(){
         ArrayList<Integer> movedPlayers = new ArrayList<Integer>();
-        for (int j = 0; j < width; j++){
-            for (int i = 0; i < heigth; i++){
+        for (int i = 0; i < heigth; i++){
+            for (int j = 0; j < width; j++){
                 if(players[i][j] != null && players[i][j].isAlive()){
                     boolean canMove = true;
                     for(int k = 0; k < movedPlayers.size(); k++){
@@ -105,7 +105,7 @@ public class Board {
                     //CLEAR LAST POSITION
                     players[x][y] = new Player();
 
-                } else if (players[x - 1][y] == null || !players[x - 1][y].isAlive()) {
+                } else if (players[x - 1][y ] == null || !players[x - 1][y].isAlive()) {
 
                     //CHANGE POSITION
                     players[x - 1][y] = players[x][y];
@@ -134,7 +134,7 @@ public class Board {
 
                     players[x][y] = new Player();
 
-                } else if (players[x][y + 1] == null || !players[x][y + 1].isAlive()) {
+                } else if (players[x][y + 1] == null || !players[x][y].isAlive()) {
 
                     players[x][y + 1] = players[x][y];
 
@@ -151,7 +151,7 @@ public class Board {
             }
         }//GOING DOWN
         else if(players[x][y].getWhichWay() == 3) {
-            if (x < width - 1 && x >= 0) {
+            if (x < heigth - 1 && x >= 0) {
 
                 if (players[x + 1][y] != null && (players[x + 1][y].isAlive() && players[x + 1][y].getWhichWay() != 1)) {
 
