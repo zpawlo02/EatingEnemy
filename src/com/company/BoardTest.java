@@ -10,7 +10,7 @@ class BoardTest {
     void spawnPlayer() {
         Board board = new Board(4, 5);
 
-        for (int i = 0; i < 10000; i++){
+        while (!board.endOfGame()){
             board.nextRound();
         }
 

@@ -11,6 +11,7 @@ public class Board {
     private static int numberOfPlayersCreated = 1;
     private int playersAlive = 1;
     private Player[][] players;
+    private int maxPlayersAlived = 1;
 
     public Board(int width, int heigth){
         this.width = width;
@@ -37,6 +38,9 @@ public class Board {
     }
 
     public void nextRound(){
+        if(playersAlive > maxPlayersAlived){
+            maxPlayersAlived = playersAlive;
+        }
         numberOfRounds++;
         if (numberOfRounds % 3 == 0 && playersAlive < width*heigth){
 
@@ -54,10 +58,6 @@ public class Board {
         showBoard();
 
         movePlayers();
-
-        /*if(endOfGame() == true){
-
-        }*/
 
     }
 
@@ -103,7 +103,7 @@ public class Board {
                     playersAlive--;
 
                     //CLEAR LAST POSITION
-                    players[x][y] = new Player();
+                    players[x][y] = null;
 
                 } else if (players[x - 1][y ] == null || !players[x - 1][y].isAlive()) {
 
@@ -111,7 +111,7 @@ public class Board {
                     players[x - 1][y] = players[x][y];
 
                     //CLEAR LAST POSITION
-                    players[x][y] = new Player();
+                    players[x][y] = null;
 
                 } else if (players[x - 1][y].isAlive() && players[x - 1][y].getWhichWay() == 3) {
 
@@ -132,13 +132,13 @@ public class Board {
 
                     playersAlive--;
 
-                    players[x][y] = new Player();
+                    players[x][y] = null;
 
                 } else if (players[x][y + 1] == null || !players[x][y].isAlive()) {
 
                     players[x][y + 1] = players[x][y];
 
-                    players[x][y] = new Player();
+                    players[x][y] = null;
 
                 } else if (players[x][y + 1].isAlive() && players[x][y + 1].getWhichWay() == 4) {
 
@@ -159,13 +159,14 @@ public class Board {
 
                     playersAlive--;
 
-                    players[x][y] = new Player();
+                    players[x][y] = null;
 
                 } else if (players[x + 1][y] == null || !players[x + 1][y].isAlive()) {
 
                     players[x + 1][y] = players[x][y];
 
-                    players[x][y] = new Player();
+                    players[x][y] = null;
+
 
                 } else if (players[x + 1][y].isAlive() && players[x + 1][y].getWhichWay() == 1) {
 
@@ -188,13 +189,13 @@ public class Board {
 
                     playersAlive--;
 
-                    players[x][y] = new Player();
+                    players[x][y] = null;
 
                 } else if (players[x][y - 1] == null || !players[x][y - 1].isAlive()) {
 
                     players[x][y - 1] = players[x][y];
 
-                    players[x][y] = new Player();
+                    players[x][y] = null;
 
                 } else if (players[x][y - 1].isAlive() && players[x][y - 1].getWhichWay() == 2) {
 
@@ -269,14 +270,15 @@ public class Board {
     public boolean endOfGame(){
         if(playersAlive == 1 && numberOfRounds > 3){
             int idOfWinner = 0;
-            for (int j = 0; j < width; j++){
-                for(int i = 0; i < heigth; i++){
-                    if (players[i][j].isAlive()){
+            for (int i = 0; i < heigth; i++){
+                for(int j = 0; j < width; j++){
+                    if ( players[i][j] != null){
                         idOfWinner = players[i][j].getIdOfPlayer();
                     }
                 }
             }
-            System.out.println("Wins player number: " + idOfWinner);
+            System.out.println("Wins player number: " + idOfWinner + " after " + numberOfRounds + " rounds!");
+            System.out.println("Max players alived: " + maxPlayersAlived);
             return true;
         }else {
             return false;
